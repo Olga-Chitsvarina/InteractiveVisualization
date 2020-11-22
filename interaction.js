@@ -110,12 +110,14 @@
     // x-axis
     scatterplot.append("g")
     .attr("class", "x axis")
-    .attr("transform", "translate(0," + (height/2-100) + ")")
     .call(xAxis)
-    .append("text")
+    .attr("transform", "translate(0," + (height/2-100) + ")")
+
+    scatterplot.append("text")
     .attr("class", "label")
     .attr("x", xScale(8))
     .attr("y", -6)
+    .attr("transform", "translate(0," + (height/2-100) + ")")
     .style("text-anchor", "end")
     .text(fieldXAxis.replace(/_/g, " "));
 
@@ -123,7 +125,8 @@
     scatterplot.append("g")
     .attr("class", "y axis")
     .call(yAxis)
-    .append("text")
+
+    scatterplot.append("text")
     .attr("class", "label")
     .attr("transform", "rotate(-90)")
     .attr("x", 0)
