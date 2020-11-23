@@ -5,6 +5,11 @@
     * http://bl.ocks.org/micahstubbs/281d7b7a7e39a9b59cf80f1b8bd41a72
     * http://bl.ocks.org/msbarry/9911363
     * http://bl.ocks.org/weiglemc/6185069
+     *
+     * References:
+     * Tooltips: https://www.d3-graph-gallery.com/graph/heatmap_tooltip.html
+     * Tooltip position: https://stackoverflow.com/questions/13190207/how-do-i-get-the-x-y-coordinates-of-the-center-of-the-circle-the-user-mouses-ove
+     * Adding labels: http://www.d3noob.org/2012/12/adding-axis-labels-to-d3js-graph.html
     *
     **/
 
@@ -16,6 +21,15 @@
     .domain([2, 3, 4, 5, 6, 7, 8])
     .range( d3.schemeBlues[7] )
     .unknown(d3.rgb(255,200,200));
+
+    var tooltip = d3.select("#my-tooltip")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("border", "solid")
+        .style("border-width", "2px")
+        .style("border-radius", "5px")
+        .style("padding", "5px")
+        .style("visibility", "hidden")
 
     const svg = d3.select('body')
     .append('svg')
@@ -144,8 +158,20 @@
     .attr("cx", xMap)
     .attr("cy", yMap)
     .style("fill", function(d) { return color(d[fieldColor]);})
-    .on("mouseover", function(d) {})
-    .on("mouseout", function(d) {});
+    .on('mouseleave', function(d){
+        tooltip.style("visibility", "hidden")
+    })
+    .on('mouseover', function(e, d) {
+        var scatterplotPos = $('.scatterplot').offset()
+        debugger
+        tooltip
+            .html("The exact value of<br>this cell is: ")
+            .style("position", "absolute")
+            .style("left", (scatterplotPos.left + this.cx.baseVal.value + 70) + "px")
+            .style("top", (scatterplotPos.top + this.cy.baseVal.value) + "px")
+            .style("opacity", 1)
+            .style("visibility", "visible")
+    })
 
     // draw legend
     var legend = scatterplot.append("g").attr("class", "legend-group").selectAll(".legend")
@@ -179,5 +205,6 @@
     .attr("dy", "1.5em")
     .style("text-anchor", "end")
     .text(fieldColor);
+
 });
 
