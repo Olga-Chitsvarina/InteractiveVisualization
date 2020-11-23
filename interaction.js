@@ -34,7 +34,9 @@
     const svg = d3.select('body')
     .append('svg')
     .attr('width', width)
-    .attr('height', height);
+    .attr('height', height)
+    .style('position', 'absolute')
+    .style('top', "50px")
 
     const map = svg
     .append('g')
@@ -163,14 +165,28 @@
     })
     .on('mouseover', function(e, d) {
         var scatterplotPos = $('.scatterplot').offset()
-        debugger
         tooltip
-            .html("The exact value of<br>this cell is: ")
+            .html("Country: " + e.Country + "<br>")
             .style("position", "absolute")
             .style("left", (scatterplotPos.left + this.cx.baseVal.value + 70) + "px")
             .style("top", (scatterplotPos.top + this.cy.baseVal.value) + "px")
             .style("opacity", 1)
             .style("visibility", "visible")
+    })
+    .on('click', function(e, d){
+        var my_country = $(".COUNTRY-CODE-GRL")
+        var my_dot = $(".COUNTRY-Rwanda")
+        $(".scatterplot").dimBackground();
+        const svg2 = d3.select('body')
+            .append('svg')
+            .attr('class', 'svg-to-remove')
+            .attr('width', width)
+            .attr('height', height)
+            .style("z-index",  )
+            .style('position', 'absolute')
+            .style('top', "50px")
+
+
     })
 
     // draw legend
