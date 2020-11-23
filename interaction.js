@@ -10,7 +10,7 @@
      * Tooltips: https://www.d3-graph-gallery.com/graph/heatmap_tooltip.html
      * Tooltip position: https://stackoverflow.com/questions/13190207/how-do-i-get-the-x-y-coordinates-of-the-center-of-the-circle-the-user-mouses-ove
      * Adding labels: http://www.d3noob.org/2012/12/adding-axis-labels-to-d3js-graph.html
-    *
+     * Dim background: https://github.com/andywer/jquery-dim-background
     **/
 
     const margin = {top: 0, right: 0, bottom: 0, left: 0};
@@ -94,6 +94,7 @@
     .data(countries.features)
     .enter().append('path')
     .attr("class", d => { return "COUNTRY-CODE-"+d.id;} )
+    .attr("class", d => { return "COUNTRY-ID-"+d.properties.name;} )
     .attr('d', path)
     .style('fill', d => color(fertilityById[d.id]))
     .style('stroke', 'white')
@@ -174,18 +175,31 @@
             .style("visibility", "visible")
     })
     .on('click', function(e, d){
-        var my_country = $(".COUNTRY-CODE-GRL")
-        var my_dot = $(".COUNTRY-Rwanda")
+        var my_country = $(".COUNTRY-ID-" + e.Country).clone()
+        var my_dot = $(".COUNTRY-" + e.Country).clone()
         $(".scatterplot").dimBackground();
         const svg2 = d3.select('body')
             .append('svg')
             .attr('class', 'svg-to-remove')
             .attr('width', width)
             .attr('height', height)
-            .style("z-index",  )
+            .style("z-index", 1000 )
             .style('position', 'absolute')
             .style('top', "50px")
 
+
+        $(".svg-to-remove").append(my_country)
+        $(".svg-to-remove").append(my_dot)
+
+        d3.select(".svg-to-remove circle")
+            .attr("cx", 100 + parseFloat(my_dot.attr('cx')))
+            .attr("cy",550 + parseFloat(my_dot.attr('cy')))
+
+
+        // $(document.body).click(function() {
+        //
+        //     $('.dimbackground-curtain').remove()
+        // });
 
     })
 
