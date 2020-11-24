@@ -11,6 +11,7 @@
      * Tooltip position: https://stackoverflow.com/questions/13190207/how-do-i-get-the-x-y-coordinates-of-the-center-of-the-circle-the-user-mouses-ove
      * Adding labels: http://www.d3noob.org/2012/12/adding-axis-labels-to-d3js-graph.html
      * Dim background: https://github.com/andywer/jquery-dim-background
+     * Assign events to element that does not exist: https://stackoverflow.com/questions/15092578/on-vs-live-click-function-on-element-that-doesnt-exist-yet
     **/
 
     const margin = {top: 0, right: 0, bottom: 0, left: 0};
@@ -177,7 +178,8 @@
     .on('click', function(e, d){
         var my_country = $(".COUNTRY-ID-" + e.Country).clone()
         var my_dot = $(".COUNTRY-" + e.Country).clone()
-        $(".scatterplot").dimBackground();
+
+
         const svg2 = d3.select('body')
             .append('svg')
             .attr('class', 'svg-to-remove')
@@ -186,6 +188,18 @@
             .style("z-index", 1000 )
             .style('position', 'absolute')
             .style('top', "50px")
+            .on('click', function(){
+                $(".svg-to-remove" ).undim()
+                $(".svg-to-remove" ).remove()
+            })
+
+        $(".svg-to-remove").dimBackground({
+            darkness : 0.8
+        }, function() {
+           $(".dimbackground-curtain" ).on( "click", function(){
+               $(".svg-to-remove" ).undim()
+               $(".svg-to-remove" ).remove()
+        } ); } );
 
 
         $(".svg-to-remove").append(my_country)
@@ -195,11 +209,6 @@
             .attr("cx", 100 + parseFloat(my_dot.attr('cx')))
             .attr("cy",550 + parseFloat(my_dot.attr('cy')))
 
-
-        // $(document.body).click(function() {
-        //
-        //     $('.dimbackground-curtain').remove()
-        // });
 
     })
 
