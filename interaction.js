@@ -104,7 +104,15 @@
     .style('stroke', 'white')
     .style('opacity', 0.8)
     .style('stroke-width', 0.3)
-    .on('mouseover',function(d){})
+    .on('mouseover',function(d){
+        tooltip
+            .html("Country: " + d.properties.name + "<br>")
+            .style("position", "absolute")
+            .style("left", (event.clientX + 10) + "px")
+            .style("top", (event.clientY) + "px")
+            .style("opacity", 1)
+            .style("visibility", "visible")
+    })
     .on('mouseout', function(d){});
 
     svg.append('path')
