@@ -29,6 +29,7 @@
         .style("border", "solid")
         .style("border-width", "2px")
         .style("border-radius", "5px")
+        .style("background-color", "white")
         .style("padding", "5px")
         .style("visibility", "hidden")
 
@@ -95,7 +96,9 @@
     .data(countries.features)
     .enter().append('path')
     .attr("class", d => { return "COUNTRY-CODE-"+d.id;} )
-    .attr("class", d => { return "COUNTRY-ID-"+d.properties.name;} )
+    .attr("class", d => {
+        return "COUNTRY-ID-"+d.properties.name.replace(/\s/g, '');
+    } )
     .attr('d', path)
     .style('fill', d => color(fertilityById[d.id]))
     .style('stroke', 'white')
@@ -157,7 +160,7 @@
     scatterplot.selectAll(".dot")
     .data(who)
     .enter().append("circle")
-    .attr("class", d => { return "dot COUNTRY-"+d.Country; } )
+    .attr("class", d => { return "dot COUNTRY-"+d.Country.replace(/\s/g, ''); } )
     .attr("r", 3.5)
     .attr("cx", xMap)
     .attr("cy", yMap)
@@ -176,8 +179,8 @@
             .style("visibility", "visible")
     })
     .on('click', function(e, d){
-        var my_country = $(".COUNTRY-ID-" + e.Country).clone()
-        var my_dot = $(".COUNTRY-" + e.Country).clone()
+        var my_country = $(".COUNTRY-ID-" + e.Country.replace(/\s/g, '') ).clone()
+        var my_dot = $(".COUNTRY-" + e.Country.replace(/\s/g, '')).clone()
 
 
         const svg2 = d3.select('body')
@@ -244,6 +247,10 @@
     .attr("dy", "1.5em")
     .style("text-anchor", "end")
     .text(fieldColor);
+
+
+    var $page_tooltip = $("#my-tooltip");
+    $page_tooltip.parent().append($page_tooltip);
 
 });
 
