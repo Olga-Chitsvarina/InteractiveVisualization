@@ -12,7 +12,8 @@
      * Adding labels: http://www.d3noob.org/2012/12/adding-axis-labels-to-d3js-graph.html
      * Dim background: https://github.com/andywer/jquery-dim-background
      * Assign events to element that does not exist: https://stackoverflow.com/questions/15092578/on-vs-live-click-function-on-element-that-doesnt-exist-yet
-    **/
+     * Darken color https://github.com/bgrins/TinyColor
+     **/
 
     const margin = {top: 0, right: 0, bottom: 0, left: 0};
     const width = 960 - margin.left - margin.right;
@@ -112,8 +113,15 @@
             .style("top", (event.clientY) + "px")
             .style("opacity", 1)
             .style("visibility", "visible")
+
+        $(this).css('stroke-width', "2.75")
+        $(this).css('stroke', tinycolor(color(fertilityById[d.id])).darken(15).toString())
     })
-    .on('mouseout', function(d){});
+    .on('mouseleave', function(d){
+        $(this).css('stroke-width', "0.3")
+        $(this).css('stroke', "white")
+        tooltip.style("visibility", "hidden")
+    })
 
     svg.append('path')
     .datum(topojson.mesh(countries.features, (a, b) => a.id !== b.id))
