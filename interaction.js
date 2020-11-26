@@ -233,8 +233,25 @@ function add_border(id, my_color) {
 }
 
 function add_tooltip(tooltip, country_name, left, top){
+    my_data = ["Country/Territory: " + country_name ]
+
+    dot_data = d3.select(".CLEAN-DOT-NAME-" + clean_country_name(country_name)).data()[0]
+    country_data = d3.select(".CLEAN-COUNTRY-NAME-" + clean_country_name(country_name)).data()[0]
+
+    if (country_data !== undefined){
+        my_data.push("Population: " + country_data.population)
+    }
+
+    if (dot_data !== undefined){
+        my_data.push( "Total fertility rate (per woman): " + dot_data["Total fertility rate (per woman)"])
+        my_data.push( "Urban population growth: " + dot_data["Urban_population_growth"])
+        my_data.push("Urban population pct of total: " + dot_data["Urban_population_pct_of_total"])
+    }
+
+    my_data = my_data.join("<br/>");
+
     tooltip
-        .html("Country/Territory: " + country_name + "<br>")
+        .html(my_data)
         .style("position", "absolute")
         .style("left", left + "px")
         .style("top", top + "px")
@@ -263,12 +280,15 @@ function handle_click(id, width, height, country_name){
     if (dot_data !== undefined && country_data !== undefined) {
         my_data = [
             "Country/Territory: " + country_data .properties.name,
-            "Population: " + country_data .population ,
+            "Population: " + country_data.population ,
             "Population growth: " + dot_data.Population_growth,
             "Population annual growth rate (%): " + dot_data["Population annual growth rate (%)"],
+            "Urban population growth: " + dot_data["Urban_population_growth"],
+            "Urban population pct of total: " + dot_data["Urban_population_pct_of_total"],
             "Population in urban areas (%): " + dot_data["Population in urban areas (%)"],
             "Population in urban agglomerations more than 1 million: " + dot_data["Population_in_urban_agglomerations_more_than_1_million"],
             "Population median age (years): " + dot_data["Population median age (years)"],
+            "Total fertility rate (per woman): " + dot_data["Total fertility rate (per woman)"],
             "Life expectancy at birth (years) female: " + dot_data["Life expectancy at birth (years) female"],
             "Life expectancy at birth (years) male: " + dot_data["Life expectancy at birth (years) male"],
             "Contraceptive_use: " + dot_data["Contraceptive_use"],
