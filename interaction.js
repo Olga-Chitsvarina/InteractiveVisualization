@@ -97,33 +97,23 @@
     .data(countries.features)
     .enter().append('path')
     .attr("class", d => { return "COUNTRY-CODE-"+d.id;} )
-    .attr("class", d => {
-        return "COUNTRY-ID-"+clean_country_name(d.properties.name);
-    } )
     .attr('d', path)
     .style('fill', d => color(fertilityById[d.id]))
     .style('stroke', 'white')
     .style('opacity', 0.8)
     .style('stroke-width', 0.3)
     .on('mouseover',function(d){
-        var country_name = d.properties.name
-        add_tooltip(tooltip, country_name,event.clientX + 10, event.clientY )
-        add_border(country_name, tinycolor(color(fertilityById[d.id])).darken(15).toString());
+        add_tooltip(tooltip, d.properties.name,event.clientX + 10, event.clientY )
+        add_border(d.id, tinycolor(color(fertilityById[d.id])).darken(15).toString());
     })
     .on('mouseleave', function(d){
-        var country_name = d.properties.name
-        remove_tooltip_and_border(country_name, tooltip)
+        remove_tooltip_and_border(d.id, tooltip)
     })
     .on('click', function(d){
-        var country_name = d.properties.name
         debugger
 
-
-        var country_name = clean_country_name(country_name)
-        var my_country = $(".COUNTRY-ID-"+country_name)
-
         let data = {name: d.properties.name, population: d.population }
-        handle_click(country_name, width, height)
+        handle_click(d.id, width, height)
     })
 
     svg.append('path')
@@ -179,24 +169,21 @@
     scatterplot.selectAll(".dot")
     .data(who)
     .enter().append("circle")
-    .attr("class", d => { return "dot COUNTRY-"+clean_country_name(d.Country) } )
+    .attr("class", d => { return "dot COUNTRY-"+d.id } )
     .attr("r", 3.5)
     .attr("cx", xMap)
     .attr("cy", yMap)
     .style("fill", function(d) { return color(d[fieldColor]);})
     .on('mouseleave', function(d){
-        var country_name = d.Country
-        remove_tooltip_and_border(country_name, tooltip)
+        remove_tooltip_and_border(d.id, tooltip)
     })
     .on('mouseover', function(d) {
         var scatterplotPos = $('.scatterplot').offset()
-        var country_name = d.Country
-        add_tooltip(tooltip, country_name, scatterplotPos.left + this.cx.baseVal.value + 70, scatterplotPos.top + this.cy.baseVal.value )
-        add_border(country_name, tinycolor(color(d[fieldColor])).darken(15).toString());
+        add_tooltip(tooltip, d.Country, scatterplotPos.left + this.cx.baseVal.value + 70, scatterplotPos.top + this.cy.baseVal.value )
+        add_border(d.id, tinycolor(color(d[fieldColor])).darken(15).toString());
     })
     .on('click', function(d){
-        var country_name = d.Country
-        handle_click(country_name, width, height)
+        handle_click(d.id, width, height)
     })
 
     // draw legend
@@ -236,10 +223,9 @@
     $page_tooltip.parent().append($page_tooltip);
 });
 
-function add_border(country_name, my_color) {
-    var country_name = clean_country_name(country_name)
-    var my_country = $(".COUNTRY-ID-"+country_name)
-    var my_dot = $(".COUNTRY-" + country_name)
+function add_border(id, my_color) {
+    var my_country = $(".COUNTRY-CODE-"+id)
+    var my_dot = $(".COUNTRY-" + id)
 
     my_country.css('stroke-width', "2.75")
     my_country.css('stroke', my_color)
@@ -257,10 +243,9 @@ function add_tooltip(tooltip, country_name, left, top){
         .style("visibility", "visible")
 }
 
-function remove_tooltip_and_border(country_name, tooltip){
-    var country_name = clean_country_name(country_name)
-    var my_country = $(".COUNTRY-ID-"+country_name)
-    var my_dot = $(".COUNTRY-" + country_name)
+function remove_tooltip_and_border(id, tooltip){
+    var my_country = $(".COUNTRY-CODE-"+id)
+    var my_dot = $(".COUNTRY-" + id)
 
     my_country.css('stroke-width', "0.3")
     my_country.css('stroke', "white")
@@ -268,10 +253,9 @@ function remove_tooltip_and_border(country_name, tooltip){
     my_dot.css('stroke', 'none')
 }
 
-function handle_click(country_name, width, height){
-    var country_name = clean_country_name(country_name)
-    var my_country = $(".COUNTRY-ID-" + country_name ).clone()
-    var my_dot = $(".COUNTRY-" + country_name).clone()
+function handle_click(id, width, height){
+    var my_country = $(".COUNTRY-CODE-" + id ).clone()
+    var my_dot = $(".COUNTRY-" + id).clone()
 
     d3.select('body')
         .append('svg')
