@@ -116,6 +116,13 @@
     })
     .on('click', function(d){
         var country_name = d.properties.name
+        debugger
+
+
+        var country_name = clean_country_name(country_name)
+        var my_country = $(".COUNTRY-ID-"+country_name)
+
+        let data = {name: d.properties.name, population: d.population }
         handle_click(country_name, width, height)
     })
 
@@ -225,10 +232,8 @@
     .style("text-anchor", "end")
     .text(fieldColor);
 
-
     var $page_tooltip = $("#my-tooltip");
     $page_tooltip.parent().append($page_tooltip);
-
 });
 
 function add_border(country_name, my_color) {
@@ -244,7 +249,7 @@ function add_border(country_name, my_color) {
 
 function add_tooltip(tooltip, country_name, left, top){
     tooltip
-        .html("Country: " + country_name + "<br>")
+        .html("Country/Territory: " + country_name + "<br>")
         .style("position", "absolute")
         .style("left", left + "px")
         .style("top", top + "px")
@@ -296,6 +301,18 @@ function handle_click(country_name, width, height){
     d3.select(".svg-to-remove circle")
         .attr("cx", 100 + parseFloat(my_dot.attr('cx')))
         .attr("cy",550 + parseFloat(my_dot.attr('cy')))
+
+    d3.select(".dimbackground-curtain")
+        .append("div")
+        .text("hello and bye")
+        .style("margin-left", 80 + "px")
+        .style("margin-top", 80 + "px")
+        .style('width', "100px")
+        .style("background-color", "#F0F0F0")
+        .style("border", "solid")
+        .style("border-width", "2px")
+        .style("border-radius", "5px")
+        .style("padding", "10px")
 }
 
 
