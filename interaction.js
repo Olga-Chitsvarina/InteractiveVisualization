@@ -106,21 +106,17 @@
     .style('opacity', 0.8)
     .style('stroke-width', 0.3)
     .on('mouseover',function(d){
-        tooltip
-            .html("Country: " + d.properties.name + "<br>")
-            .style("position", "absolute")
-            .style("left", (event.clientX + 10) + "px")
-            .style("top", (event.clientY) + "px")
-            .style("opacity", 1)
-            .style("visibility", "visible")
-
-        $(this).css('stroke-width', "2.75")
-        $(this).css('stroke', tinycolor(color(fertilityById[d.id])).darken(15).toString())
+        var country_name = d.properties.name
+        add_tooltip(tooltip, country_name,event.clientX + 10, event.clientY )
+        add_border(country_name, tinycolor(color(fertilityById[d.id])).darken(15).toString());
     })
     .on('mouseleave', function(d){
-        $(this).css('stroke-width', "0.3")
-        $(this).css('stroke', "white")
-        tooltip.style("visibility", "hidden")
+        var country_name = d.properties.name
+        remove_tooltip_and_border(country_name, tooltip)
+    })
+    .on('click', function(d){
+        var country_name = d.properties.name
+        handle_click(country_name, width, height)
     })
 
     svg.append('path')
@@ -182,53 +178,18 @@
     .attr("cy", yMap)
     .style("fill", function(d) { return color(d[fieldColor]);})
     .on('mouseleave', function(d){
-        tooltip.style("visibility", "hidden")
+        var country_name = d.Country
+        remove_tooltip_and_border(country_name, tooltip)
     })
-    .on('mouseover', function(e, d) {
+    .on('mouseover', function(d) {
         var scatterplotPos = $('.scatterplot').offset()
-        tooltip
-            .html("Country: " + e.Country + "<br>")
-            .style("position", "absolute")
-            .style("left", (scatterplotPos.left + this.cx.baseVal.value + 70) + "px")
-            .style("top", (scatterplotPos.top + this.cy.baseVal.value) + "px")
-            .style("opacity", 1)
-            .style("visibility", "visible")
+        var country_name = d.Country
+        add_tooltip(tooltip, country_name, scatterplotPos.left + this.cx.baseVal.value + 70, scatterplotPos.top + this.cy.baseVal.value )
+        add_border(country_name, tinycolor(color(d[fieldColor])).darken(15).toString());
     })
-    .on('click', function(e, d){
-        var my_country = $(".COUNTRY-ID-" + e.Country.replace(/\s/g, '') ).clone()
-        var my_dot = $(".COUNTRY-" + e.Country.replace(/\s/g, '')).clone()
-
-
-        const svg2 = d3.select('body')
-            .append('svg')
-            .attr('class', 'svg-to-remove')
-            .attr('width', width)
-            .attr('height', height)
-            .style("z-index", 1000 )
-            .style('position', 'absolute')
-            .style('top', "50px")
-            .on('click', function(){
-                $(".svg-to-remove" ).undim()
-                $(".svg-to-remove" ).remove()
-            })
-
-        $(".svg-to-remove").dimBackground({
-            darkness : 0.8
-        }, function() {
-           $(".dimbackground-curtain" ).on( "click", function(){
-               $(".svg-to-remove" ).undim()
-               $(".svg-to-remove" ).remove()
-        } ); } );
-
-
-        $(".svg-to-remove").append(my_country)
-        $(".svg-to-remove").append(my_dot)
-
-        d3.select(".svg-to-remove circle")
-            .attr("cx", 100 + parseFloat(my_dot.attr('cx')))
-            .attr("cy",550 + parseFloat(my_dot.attr('cy')))
-
-
+    .on('click', function(d){
+        var country_name = d.Country
+        handle_click(country_name, width, height)
     })
 
     // draw legend
@@ -270,3 +231,69 @@
 
 });
 
+function add_border(country_name, my_color) {
+    var country_name = country_name.replace(/\s/g, '')
+    var my_country = $(".COUNTRY-ID-"+country_name)
+    var my_dot = $(".COUNTRY-" + country_name)
+
+    my_country.css('stroke-width', "2.75")
+    my_country.css('stroke', my_color)
+    my_dot.css('stroke-width', "2.75")
+    my_dot.css('stroke', my_color)
+}
+
+function add_tooltip(tooltip, country_name, left, top){
+    tooltip
+        .html("Country: " + country_name + "<br>")
+        .style("position", "absolute")
+        .style("left", left + "px")
+        .style("top", top + "px")
+        .style("opacity", 1)
+        .style("visibility", "visible")
+}
+
+function remove_tooltip_and_border(country_name, tooltip){
+    var country_name = country_name.replace(/\s/g, '')
+    var my_country = $(".COUNTRY-ID-"+country_name)
+    var my_dot = $(".COUNTRY-" + country_name)
+
+    my_country.css('stroke-width', "0.3")
+    my_country.css('stroke', "white")
+    tooltip.style("visibility", "hidden")
+    my_dot.css('stroke', 'none')
+}
+
+function handle_click(country_name, width, height){
+    var country_name = country_name.replace(/\s/g, '')
+    var my_country = $(".COUNTRY-ID-" + country_name ).clone()
+    var my_dot = $(".COUNTRY-" + country_name).clone()
+
+    d3.select('body')
+        .append('svg')
+        .attr('class', 'svg-to-remove')
+        .attr('width', width)
+        .attr('height', height)
+        .style("z-index", 1000 )
+        .style('position', 'absolute')
+        .style('top', "50px")
+        .on('click', function(){
+            $(".svg-to-remove" ).undim()
+            $(".svg-to-remove" ).remove()
+        })
+
+    $(".svg-to-remove").dimBackground({
+        darkness : 0.8
+    }, function() {
+        $(".dimbackground-curtain" ).on( "click", function(){
+            $(".svg-to-remove" ).undim()
+            $(".svg-to-remove" ).remove()
+        } ); } );
+
+
+    $(".svg-to-remove").append(my_country)
+    $(".svg-to-remove").append(my_dot)
+
+    d3.select(".svg-to-remove circle")
+        .attr("cx", 100 + parseFloat(my_dot.attr('cx')))
+        .attr("cy",550 + parseFloat(my_dot.attr('cy')))
+}
