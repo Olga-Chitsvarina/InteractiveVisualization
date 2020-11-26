@@ -110,9 +110,6 @@
         remove_tooltip_and_border(d.id, tooltip)
     })
     .on('click', function(d){
-        debugger
-
-        let data = {name: d.properties.name, population: d.population }
         handle_click(d.id, width, height)
     })
 
@@ -257,6 +254,26 @@ function handle_click(id, width, height){
     var my_country = $(".COUNTRY-CODE-" + id ).clone()
     var my_dot = $(".COUNTRY-" + id).clone()
 
+    let my_data = ""
+    dot_data = d3.select(".COUNTRY-" + id).data()[0]
+    country_data = d3.select(".COUNTRY-CODE-" + id).data()[0]
+
+    if (dot_data !== undefined && country_data !== undefined) {
+        my_data = [
+            "Country/Territory: " + country_data .properties.name,
+            "Population: " + country_data .population ,
+            "Population growth: " + dot_data.Population_growth,
+            "Population annual growth rate (%): " + dot_data["Population annual growth rate (%)"],
+            "Population in urban areas (%): " + dot_data["Population in urban areas (%)"],
+            "Population in urban agglomerations more than 1 million: " + dot_data["Population_in_urban_agglomerations_more_than_1_million"],
+            "Population median age (years): " + dot_data["Population median age (years)"],
+            "Life expectancy at birth (years) female: " + dot_data["Life expectancy at birth (years) female"],
+            "Life expectancy at birth (years) male: " + dot_data["Life expectancy at birth (years) male"],
+            "Contraceptive_use: " + dot_data["Contraceptive_use"],
+            "Hospital beds (per 10 000 population): " + dot_data["Hospital beds (per 10 000 population)"],
+            "Adult literacy rate (%): " + dot_data["Adult literacy rate (%)"] ].join("<br/>");
+    }
+
     d3.select('body')
         .append('svg')
         .attr('class', 'svg-to-remove')
@@ -288,18 +305,13 @@ function handle_click(id, width, height){
 
     d3.select(".dimbackground-curtain")
         .append("div")
-        .text("hello and bye")
-        .style("margin-left", 80 + "px")
-        .style("margin-top", 80 + "px")
-        .style('width', "100px")
+        .html(my_data)
+        .style("margin-left", 10 + "px")
+        .style("margin-top", 10 + "px")
         .style("background-color", "#F0F0F0")
         .style("border", "solid")
+        .style("max-width", "300px")
         .style("border-width", "2px")
         .style("border-radius", "5px")
         .style("padding", "10px")
-}
-
-
-function clean_country_name(country_name){
-    return country_name.replace(/\s/g, '').replace(/[^\w\s!?]/g,'');
 }
