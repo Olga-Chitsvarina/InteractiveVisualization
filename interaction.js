@@ -98,7 +98,7 @@
     .enter().append('path')
     .attr("class", d => { return "COUNTRY-CODE-"+d.id;} )
     .attr("class", d => {
-        return "COUNTRY-ID-"+d.properties.name.replace(/\s/g, '');
+        return "COUNTRY-ID-"+clean_country_name(d.properties.name);
     } )
     .attr('d', path)
     .style('fill', d => color(fertilityById[d.id]))
@@ -172,7 +172,7 @@
     scatterplot.selectAll(".dot")
     .data(who)
     .enter().append("circle")
-    .attr("class", d => { return "dot COUNTRY-"+d.Country.replace(/\s/g, ''); } )
+    .attr("class", d => { return "dot COUNTRY-"+clean_country_name(d.Country) } )
     .attr("r", 3.5)
     .attr("cx", xMap)
     .attr("cy", yMap)
@@ -232,7 +232,7 @@
 });
 
 function add_border(country_name, my_color) {
-    var country_name = country_name.replace(/\s/g, '')
+    var country_name = clean_country_name(country_name)
     var my_country = $(".COUNTRY-ID-"+country_name)
     var my_dot = $(".COUNTRY-" + country_name)
 
@@ -253,7 +253,7 @@ function add_tooltip(tooltip, country_name, left, top){
 }
 
 function remove_tooltip_and_border(country_name, tooltip){
-    var country_name = country_name.replace(/\s/g, '')
+    var country_name = clean_country_name(country_name)
     var my_country = $(".COUNTRY-ID-"+country_name)
     var my_dot = $(".COUNTRY-" + country_name)
 
@@ -264,7 +264,7 @@ function remove_tooltip_and_border(country_name, tooltip){
 }
 
 function handle_click(country_name, width, height){
-    var country_name = country_name.replace(/\s/g, '')
+    var country_name = clean_country_name(country_name)
     var my_country = $(".COUNTRY-ID-" + country_name ).clone()
     var my_dot = $(".COUNTRY-" + country_name).clone()
 
@@ -296,4 +296,9 @@ function handle_click(country_name, width, height){
     d3.select(".svg-to-remove circle")
         .attr("cx", 100 + parseFloat(my_dot.attr('cx')))
         .attr("cy",550 + parseFloat(my_dot.attr('cy')))
+}
+
+
+function clean_country_name(country_name){
+    return country_name.replace(/\s/g, '').replace(/[^\w\s!?]/g,'');
 }
