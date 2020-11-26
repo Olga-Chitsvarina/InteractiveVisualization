@@ -96,7 +96,7 @@
     .selectAll('path')
     .data(countries.features)
     .enter().append('path')
-    .attr("class", d => { return "COUNTRY-CODE-"+d.id;} )
+    .attr("class", d => "CLEAN-COUNTRY-NAME-" + clean_country_name(d.properties.name))
     .attr('d', path)
     .style('fill', d => color(fertilityById[d.id]))
     .style('stroke', 'white')
@@ -104,13 +104,14 @@
     .style('stroke-width', 0.3)
     .on('mouseover',function(d){
         add_tooltip(tooltip, d.properties.name,event.clientX + 10, event.clientY )
-        add_border(d.id, tinycolor(color(fertilityById[d.id])).darken(15).toString());
+        add_border(clean_country_name(d.properties.name), tinycolor(color(fertilityById[d.id])).darken(15).toString());
     })
     .on('mouseleave', function(d){
-        remove_tooltip_and_border(d.id, tooltip)
+        remove_tooltip_and_border(clean_country_name(d.properties.name), tooltip)
     })
     .on('click', function(d){
-        handle_click(d.id, width, height)
+        let country_name =  d.properties.name
+        handle_click(clean_country_name(d.properties.name), width, height, country_name)
     })
 
     svg.append('path')
@@ -166,21 +167,22 @@
     scatterplot.selectAll(".dot")
     .data(who)
     .enter().append("circle")
-    .attr("class", d => { return "dot COUNTRY-"+d.id } )
+    .attr("class", d => { return "dot CLEAN-DOT-NAME-" + clean_country_name(d.Country) } )
     .attr("r", 3.5)
     .attr("cx", xMap)
     .attr("cy", yMap)
     .style("fill", function(d) { return color(d[fieldColor]);})
     .on('mouseleave', function(d){
-        remove_tooltip_and_border(d.id, tooltip)
+        remove_tooltip_and_border(clean_country_name(d.Country), tooltip)
     })
     .on('mouseover', function(d) {
         var scatterplotPos = $('.scatterplot').offset()
         add_tooltip(tooltip, d.Country, scatterplotPos.left + this.cx.baseVal.value + 70, scatterplotPos.top + this.cy.baseVal.value )
-        add_border(d.id, tinycolor(color(d[fieldColor])).darken(15).toString());
+        add_border(clean_country_name(d.Country), tinycolor(color(d[fieldColor])).darken(15).toString());
     })
     .on('click', function(d){
-        handle_click(d.id, width, height)
+        var country_name = d.Country
+        handle_click(clean_country_name(d.Country), width, height, country_name)
     })
 
     // draw legend
@@ -221,8 +223,8 @@
 });
 
 function add_border(id, my_color) {
-    var my_country = $(".COUNTRY-CODE-"+id)
-    var my_dot = $(".COUNTRY-" + id)
+    var my_country = $(".CLEAN-COUNTRY-NAME-"+id)
+    var my_dot = $(".CLEAN-DOT-NAME-" + id)
 
     my_country.css('stroke-width', "2.75")
     my_country.css('stroke', my_color)
@@ -241,8 +243,8 @@ function add_tooltip(tooltip, country_name, left, top){
 }
 
 function remove_tooltip_and_border(id, tooltip){
-    var my_country = $(".COUNTRY-CODE-"+id)
-    var my_dot = $(".COUNTRY-" + id)
+    var my_country = $(".CLEAN-COUNTRY-NAME-"+id)
+    var my_dot = $(".CLEAN-DOT-NAME-" + id)
 
     my_country.css('stroke-width', "0.3")
     my_country.css('stroke', "white")
@@ -250,13 +252,13 @@ function remove_tooltip_and_border(id, tooltip){
     my_dot.css('stroke', 'none')
 }
 
-function handle_click(id, width, height){
-    var my_country = $(".COUNTRY-CODE-" + id ).clone()
-    var my_dot = $(".COUNTRY-" + id).clone()
+function handle_click(id, width, height, country_name){
+    var my_country = $(".CLEAN-COUNTRY-NAME-"+id).clone()
+    var my_dot = $(".CLEAN-DOT-NAME-" + id).clone()
 
-    let my_data = ""
-    dot_data = d3.select(".COUNTRY-" + id).data()[0]
-    country_data = d3.select(".COUNTRY-CODE-" + id).data()[0]
+    let my_data = "Some data is missing for country " + country_name
+    dot_data = d3.select(".CLEAN-DOT-NAME-" + id).data()[0]
+    country_data = d3.select(".CLEAN-COUNTRY-NAME-" + id).data()[0]
 
     if (dot_data !== undefined && country_data !== undefined) {
         my_data = [
@@ -314,4 +316,8 @@ function handle_click(id, width, height){
         .style("border-width", "2px")
         .style("border-radius", "5px")
         .style("padding", "10px")
+}
+
+function clean_country_name(country_name){
+    return country_name.replace(/\s/g, '').replace(/[^\w\s!?]/g,'');
 }
